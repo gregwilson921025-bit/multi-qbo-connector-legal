@@ -1,0 +1,196 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Setup Guide - Multi-Company QuickBooks Connector</title><style>body{font-family:system-ui,sans-serif;max-width:46rem;margin:2rem auto;padding:0 1rem;line-height:1.6;color:#1a1a1a}h1{font-size:1.7rem}h2{font-size:1.3rem;margin-top:2rem}pre,code{background:#f3f3f3;padding:.1rem .3rem;border-radius:3px;overflow-x:auto}pre{padding:.6rem}table{border-collapse:collapse}td,th{border:1px solid #ccc;padding:.4rem .6rem;vertical-align:top}</style></head><body><h1>QuickBooks Multi-Company for Claude: Setup and Use Guide</h1>
+<p>This add-on lets Claude answer questions across all of your QuickBooks Online
+companies at once, for example "Compare October net income across all my
+companies." The regular QuickBooks connector in Claude only looks at one company
+at a time.</p>
+<p><strong>What it can and can't do</strong></p>
+<ul>
+<li><strong>Read-only.</strong> It can read reports and look things up. It cannot create,
+  change or delete anything in QuickBooks. That rule is built into the code, not
+  just a setting.</li>
+<li><strong>Yours alone.</strong> It uses your own Intuit developer app and runs on your own
+  computer. Your QuickBooks sign-ins are stored encrypted on this PC, under your
+  Windows login. Nobody else, including the person who gave you this, has access
+  to your books or your keys.</li>
+<li><strong>You maintain it.</strong> This guide covers setup, daily use, reconnecting and
+  updating.</li>
+</ul>
+<p><strong>What you need</strong></p>
+<ul>
+<li>A Windows PC with the Claude desktop app, signed in.</li>
+<li>An admin login for each QuickBooks Online company you want to connect.</li>
+<li>About 1 to 2 hours for the one-time Intuit setup in Part 1. After that,
+  connecting each company takes a minute.</li>
+</ul>
+<hr />
+<h2>Part 1: Your Intuit developer app (one time)</h2>
+<p>Intuit only lets an app read QuickBooks data if the app is registered with them.
+You'll register a private app that only you use.</p>
+<ol>
+<li><strong>Sign in</strong> at https://developer.intuit.com with your QuickBooks login.</li>
+<li><strong>Complete your profile.</strong> Intuit asks for your address and phone number
+   (My Hub &gt; Account Profile) before it will turn on production (real company)
+   access.</li>
+<li><strong>Create the app.</strong> Go to My Hub &gt; App dashboard, click the <strong>+</strong> to create an
+   app, and choose QuickBooks Online. Give it any name, such as "My Company
+   Reports". When it asks for scopes, choose <strong>Accounting</strong> only
+   (<code>com.intuit.quickbooks.accounting</code>).</li>
+<li><strong>Get production keys.</strong> Open the app and click <strong>Get production keys</strong>. Intuit
+   walks you through two sections:
+   - <strong>App details.</strong> Intuit may ask for links such as terms of use and a privacy
+     policy. For a private app used only by your own company, a simple page on
+     your company website or a published document stating that the app is
+     internal and read-only is enough.
+   - <strong>Compliance and the App Assessment Questionnaire.</strong> This takes about an
+     hour. Answer it truthfully. Facts you'll need:<ul>
+<li>Private app, used only by our own company, not sold or listed.</li>
+<li>Reads accounting reports only; never writes to QuickBooks.</li>
+<li>Runs on our own computer. Sign-in tokens are stored only on that computer,
+   encrypted with Windows data protection. No data is sent to any server
+   other than Intuit's.</li>
+<li>Uses OAuth 2.0 and refreshes access tokens automatically.
+   Intuit reviews this and then turns on production keys. Timing is up to Intuit.</li>
+</ul>
+</li>
+<li><strong>Add the redirect address.</strong> In the app, go to <strong>Settings &gt; Redirect URIs &gt;
+   Production</strong>, click <strong>Add URI</strong>, enter exactly the address below, and click
+   <strong>Save</strong>:</li>
+</ol>
+<p><code>https://developer.intuit.com/v2/OAuth2Playground/RedirectUrl</code></p>
+<p>This is Intuit's own page. After you approve a company, Intuit sends you there
+   with a one-time code, which you paste into Claude (see Part 3).
+6. <strong>Copy your keys.</strong> Go to <strong>Keys and credentials</strong>, Production tab. You'll need
+   the <strong>Client ID</strong> and <strong>Client Secret</strong> in Part 2. Treat the Client Secret like
+   a password: don't email it or paste it into a chat.</p>
+<hr />
+<h2>Part 2: Install the add-on in Claude (one time)</h2>
+<ol>
+<li>Double-click <strong>QuickBooks-Multi-Company.mcpb</strong>. The Claude desktop app opens
+   and offers to install it. Click <strong>Install</strong>.</li>
+<li>Claude asks for three settings:
+   - <strong>Intuit Client ID:</strong> from Part 1, step 6.
+   - <strong>Intuit Client Secret:</strong> from Part 1, step 6. Claude stores it securely.
+   - <strong>Environment:</strong> leave it as <code>production</code>. (<code>sandbox</code> is only for Intuit's
+     fake test companies.)</li>
+<li>Make sure it shows as enabled under <strong>Settings &gt; Extensions</strong>. The first time
+   it starts, it may take a minute or two to download the components it needs.</li>
+</ol>
+<hr />
+<h2>Part 3: Connect each company (a minute each)</h2>
+<p>Repeat these steps for each QuickBooks company:</p>
+<ol>
+<li>In a new Claude chat, type: <strong>Connect a QuickBooks company.</strong></li>
+<li>Your web browser opens to QuickBooks. Sign in, pick the company and click
+   <strong>Connect</strong>.</li>
+<li>You land on an Intuit page titled <strong>OAuth 2.0 Playground</strong>. <strong>Don't click
+   anything on that page.</strong> Click the browser's address bar, copy the whole
+   address (it starts with <code>https://developer.intuit.com/v2/OAuth2Playground/RedirectUrl?code=</code>),
+   then paste it into Claude and press Enter.</li>
+<li>Claude replies "Connected '<company name>'."</li>
+</ol>
+<p>You have 15 minutes to paste the address, and each code only works once. If
+anything goes wrong, just start again at step 1.</p>
+<p>When all your companies are connected, ask: <strong>List my QuickBooks companies.</strong></p>
+<hr />
+<h2>Part 4: Asking questions</h2>
+<p>Talk to Claude normally. Some examples:</p>
+<ul>
+<li>"Compare October net income across all my companies."</li>
+<li>"Which company has the most receivables over 60 days old?"</li>
+<li>"Show each company's cash balance."</li>
+<li>"Show the balance sheet for <company> as of September 30."</li>
+<li>"Line up year-to-date income and net income for every company."</li>
+<li>"List unpaid invoices over $5,000 for <company>."</li>
+</ul>
+<p>Tips:</p>
+<ul>
+<li>You can refer to a company by part of its name. If the part matches more than
+  one company, Claude will ask which one you mean.</li>
+<li>Reports use accrual accounting unless you ask for cash basis.</li>
+<li>Claude can add up and compare the numbers, but check anything important
+  against QuickBooks itself, as you would with any report.</li>
+</ul>
+<hr />
+<h2>Part 5: Keeping it working</h2>
+<ul>
+<li><strong>Reconnecting.</strong> Intuit cancels a company's access if it goes unused for about
+  100 days, and may sometimes ask you to sign in again anyway. When Claude says a
+  company needs reconnecting, or a question about it fails, just repeat Part 3
+  for that company. "List my QuickBooks companies" shows how many days each
+  connection has left.</li>
+<li><strong>Removing a company.</strong> Ask Claude: "Disconnect <company>." This deletes the
+  saved sign-in on this computer and cancels the app's access at Intuit. Nothing
+  inside QuickBooks is changed.</li>
+<li><strong>New Client Secret.</strong> If you reset your Client Secret at Intuit, enter the new
+  one under <strong>Settings &gt; Extensions &gt; QuickBooks Multi-Company &gt; Configure</strong>.</li>
+<li><strong>New computer or Windows user.</strong> Saved sign-ins only work for the Windows user
+  who created them. On a new PC, install the add-on (Part 2) and reconnect each
+  company (Part 3).</li>
+<li><strong>Where things are stored.</strong> <code>%APPDATA%\QuickBooksMulti</code> holds the encrypted
+  sign-ins (<code>tokens.enc</code>) and the protected key that unlocks them (<code>token.key</code>).
+  Deleting that folder removes all connections.</li>
+</ul>
+<hr />
+<h2>Part 6: Updating it yourself</h2>
+<p>You have the complete source code, so you can change it however you like.</p>
+<p><strong>Installing a newer version.</strong> Double-click the new <code>.mcpb</code> file and click
+<strong>Install</strong> (or <strong>Update</strong>). Your connected companies stay connected, because
+they're stored separately in <code>%APPDATA%\QuickBooksMulti</code>.</p>
+<p><strong>Making a change.</strong> The easiest way is to use Claude Code:</p>
+<ol>
+<li>Open the source folder in Claude Code and describe the change, for example:
+   "Intuit changed the report format; fix the aging report," or "Add a tool for
+   sales by customer."</li>
+<li>Ask Claude to raise the <code>version</code> number in <code>manifest.json</code> and rebuild the
+   add-on. The build command is below; it needs Node.js, which Claude Code
+   already uses:</li>
+</ol>
+<p><code>npx @anthropic-ai/mcpb pack . QuickBooks-Multi-Company.mcpb</code></p>
+<ol start="3">
+<li>Install the new <code>.mcpb</code> file as above.</li>
+</ol>
+<p>Ground rule for any change: keep it read-only. <code>src/qbo_mcp/guard.py</code> is the part
+that blocks writes, and <code>tests/test_guard.py</code> proves it. Don't loosen either one.</p>
+<p><strong>If Intuit changes things.</strong> Intuit announces API changes on its developer blog
+(https://blog.developer.intuit.com). If questions start failing for every
+company, check that first, then ask Claude Code to look at the error.</p>
+<hr />
+<h2>Troubleshooting</h2>
+<table>
+<thead>
+<tr>
+<th>What you see</th>
+<th>What to do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The add-on doesn't appear, or Claude says the tools aren't available</td>
+<td>Settings &gt; Extensions: make sure it's enabled. Fully quit and reopen Claude.</td>
+</tr>
+<tr>
+<td>"Missing Intuit Client ID" or "Client Secret"</td>
+<td>Settings &gt; Extensions &gt; QuickBooks Multi-Company &gt; Configure, and fill them in.</td>
+</tr>
+<tr>
+<td>Intuit shows an error about the redirect URI</td>
+<td>In your Intuit app, check that Settings &gt; Redirect URIs &gt; <strong>Production</strong> has exactly the address in Part 1, step 5.</td>
+</tr>
+<tr>
+<td>"That sign-in is more than 15 minutes old" or "state mismatch"</td>
+<td>Start Part 3 again from step 1, and paste the address within 15 minutes.</td>
+</tr>
+<tr>
+<td>"Refresh token ... is no longer valid"</td>
+<td>That company needs reconnecting: repeat Part 3.</td>
+</tr>
+<tr>
+<td>A company doesn't appear in the QuickBooks company list</td>
+<td>You must be an admin in that company to connect apps.</td>
+</tr>
+<tr>
+<td>Every company fails at once</td>
+<td>Check that your production keys are still active in the Intuit developer portal, and check the Intuit developer blog for API changes.</td>
+</tr>
+</tbody>
+</table><hr><p><a href="./">Back to home</a> | <a href="privacy.html">Privacy policy</a> | <a href="eula.html">End-user license agreement</a></p></body></html>
